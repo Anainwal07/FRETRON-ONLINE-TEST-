@@ -1,0 +1,154 @@
+/**Problem 2 : My Money My Shares
+					
+Ram , sham and rahim went for shopping apple. They bought apple worth 100 rupees. Ram paid 50 rupees, sham paid 30 rupees  and rahim paid 20 rupees. Each apple is tagged with its weight on it.  Write a program to distribute apples such that the quantity of apple they get is in best proportionate to the amount they paid. 
+
+Note : you cannot cut a apple into pieces have to allocate the whole apple to one of them. As we need to distribut the apples not the weight 
+
+For example : 
+
+If there is 8 apple  of  400g , 100g  , 400g , 300g , 200g , 300g ,100g , 200g  then we can distribute them as 
+
+Ram :  400g , 400g , 200g  (total 1kg , 50%)
+Sham :  300g , 300g (tatal 600g , 30%)
+rahim , 200g , 100g , 100g  (tatal 400g , 20%)
+
+
+Expected program output : 
+
+run distribute_apple
+Enter apple weight in gram (-1 to stop ) :  400
+Enter apple weight in gram (-1 to stop ) :  100
+Enter apple weight in gram (-1 to stop ) :  400
+Enter apple weight in gram (-1 to stop ) :  300
+Enter apple weight in gram (-1 to stop ) :  200
+Enter apple weight in gram (-1 to stop ) :  300
+Enter apple weight in gram (-1 to stop ) :  100
+Enter apple weight in gram (-1 to stop ) :  200
+Enter apple weight in gram (-1 to stop ) :  -1
+
+Distribution Result : 
+Ram : 400 400 100
+Sham : 300 , 300
+Rahim  : 200 , 100 , 100
+
+
+To distribute apples in a way that approximates the proportion of money each person paid, follow these steps:
+
+Define the proportions each person has paid (Ram 50%, Sham 30%, Rahim 20%).
+Calculate Total Weight and Desired Distribution:
+
+Calculate the total weight of all apples.
+Determine the ideal total weight each person should receive based on their proportion of the total cost.
+
+Sort Apples:
+Sort the apples by weight in descending order to facilitate efficient allocation.
+
+Allocate Apples:
+Iterate through the sorted apples and allocate them to each person, trying to get as close as possible to the ideal total weight for each person without exceeding it.
+
+Output the Result:
+Print the distribution of apples for each person.
+
+Detailed Steps:
+Define Data Structures:
+
+Create a Person structure to store the name, proportion, list of apples received, and total weight of apples received.
+Input Collection:
+
+Use a loop to collect the weights of apples from the user until a sentinel value (-1) is entered.
+Calculate Total Weight and Desired Distribution:
+
+Sum the weights of all apples to get the total weight.
+Calculate the weight each person should ideally receive by multiplying their proportion by the total weight.
+Sort Apples:
+
+Sort the apples in descending order by weight.
+Allocate Apples:
+
+Use nested loops to go through each apple and allocate it to a person who hasn't yet reached their ideal weight, starting with the largest apple to make sure the heavier apples are allocated first.
+
+Output the Result:
+
+Print the apples received by each person.
+
+**/
+
+
+
+
+//code
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <numeric>
+
+using namespace std;
+
+struct Person {
+    string name;
+    int proportion;
+    vector<int> apples;
+    int totalWeight;
+
+    // Constructor to initialize Person
+    Person(string n, int p) : name(n), proportion(p), totalWeight(0) {}
+};
+
+void distributeApples(vector<int> &apples, vector<Person> &people) {
+    // Sort apples by weight in descending order
+    sort(apples.begin(), apples.end(), greater<int>());
+
+    int totalWeight = accumulate(apples.begin(), apples.end(), 0);
+
+    // Calculate the total weight required for each person
+    for (auto &person : people) {
+        person.totalWeight = (person.proportion * totalWeight) / 100;
+    }
+
+    // Allocate apples to each person
+    for (int i = 0; i < apples.size(); ++i) {
+        for (auto &person : people) {
+            if (person.totalWeight > 0) {
+                if (person.totalWeight >= apples[i]) {
+                    person.apples.push_back(apples[i]);
+                    person.totalWeight -= apples[i];
+                    break;
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    vector<int> apples;
+    vector<Person> people;
+
+    // Initialize people with names and proportions
+    people.emplace_back("Ram", 50);
+    people.emplace_back("Sham", 30);
+    people.emplace_back("Rahim", 20);
+
+    int weight;
+    cout << "Enter apple weight in gram (-1 to stop) : ";
+    while (cin >> weight && weight != -1) {
+        apples.push_back(weight);
+        cout << "Enter apple weight in gram (-1 to stop) : ";
+    }
+
+    // Distribute apples
+    distributeApples(apples, people);
+
+    // Output results
+    cout << "Distribution Result :" << endl;
+    for (const auto &person : people) {
+        cout << person.name << " : ";
+        for (const auto &apple : person.apples) {
+            cout << apple << " ";
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
+
+Reference :- No references used 
